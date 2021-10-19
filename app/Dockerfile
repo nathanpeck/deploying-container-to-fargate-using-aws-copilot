@@ -1,7 +1,7 @@
 FROM node:14 AS build
 WORKDIR /srv
-RUN npm install raw-body
-RUN npm install runes
+ADD package.json package-lock.json ./
+RUN npm install
 
 FROM node:14-slim
 WORKDIR /srv
