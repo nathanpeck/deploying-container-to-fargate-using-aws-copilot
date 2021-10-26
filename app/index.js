@@ -24,5 +24,6 @@ var server = app.listen(port, () => {
 })
 
 process.once('SIGTERM', function () {
+  console.log('Received SIGTERM signal, closing server');
   server.close();
 });
