@@ -29,7 +29,10 @@ Once the environment is ready you can click the plus button and select "New Term
 In the terminal you can now run the command to install the latest version of AWS Copilot, and verify that it runs:
 
 ```sh
-curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux && chmod +x copilot && sudo mv copilot /usr/local/bin/copilot && copilot --help
+curl -Lo copilot https://github.com/aws/copilot-cli/releases/latest/download/copilot-linux
+chmod +x copilot
+sudo mv copilot /usr/local/bin/copilot
+copilot --help
 ```
 
 Last you should clone this repo inside of the environment in order to pull in the code that will be used:
