@@ -90,3 +90,19 @@ ADD . .
 EXPOSE 3000
 CMD ["node", "index.js"]
 ```
+
+This file defines how to construct a Docker container image for the application. It uses a multistage build. The first stage is run inside a full Node.js development environment that has NPM, and the full package build dependencies, including a compiler for native bindings. The second stage uses a slim Node.js environment that just has the Node runtime. It grabs the prebuilt packages from the previous stage, and it adds the application code.
+
+You can verify that this Dockerfile builds by running:
+
+```sh
+docker build -t app .
+```
+
+## Step Four: Run the application locally on the Cloud 9 Instance
+
+## Step Five: Use AWS Copilot to build and deploy the application on AWS Fargate
+
+## Step Six: Deploy a load test job using AWS Copilot
+
+## Step Seven: Look at CloudWatch to read the metrics
