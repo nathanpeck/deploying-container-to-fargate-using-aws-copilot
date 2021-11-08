@@ -35,6 +35,26 @@ sudo mv copilot /usr/local/bin/copilot
 copilot --help
 ```
 
+Next let's run a command to make sure you will be logged in inside of this Cloud9 environment:
+
+```sh
+# Install prerequisites
+sudo yum install -y jq
+
+# Setting environment variables required to communicate with AWS API's via the cli tools
+echo "export AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)" >> ~/.bashrc
+source ~/.bashrc
+
+mkdir -p ~/.aws
+
+cat << EOF > ~/.aws/config
+[default]
+region = ${AWS_DEFAULT_REGION}
+output = json
+credential_source = Ec2InstanceMetadata
+EOF
+```
+
 Last you should clone this repo inside of the environment in order to pull in the code that will be used:
 
 ```sh
@@ -99,9 +119,60 @@ You can verify that this Dockerfile builds by running:
 docker build -t app .
 ```
 
-## Step Four: Run the application locally on the Cloud 9 Instance
+## Step Four: Run the application locally on the Cloud9 Instance
+
+Now that the Docker container image is built, you can run the container image on the development instance to verify that it will work:
+
+```sh
+docker run -d -p 3000:3000 --name reverse app
+```
+
+This command has a few components to recognize:
+
+- `docker run` - What you want to happen: run a container image as a container
+- `-d` - Run the container in the background
+- `-p 3000:3000` - The application in the container is binding to port 3000. Accept traffic on the host at port 3000 and send that traffic to the contianer's port 3000.
+- `--name reverse` - Name this copy of the running container `reverse`
+- `app` - The name of the container image to run as a container
+
+You can now check to verify that the container is running:
+
+```sh
+docker ps
+```
+
+![images/docker-run-ps.png](images/docker-run-ps.png)
+
+Last but not least you can send traffic to the containerized application in the same way that you sent traffic when it was running directly on the host:
+
+```sh
+curl -d "this is a test" localhost:3000
+```
+
+And you can see the logs for the running container with:
+
+```sh
+docker logs reverse
+```
+
+![images/docker-logs.png](images/docker-logs.png)
+
+You can stop the container and verify it has stopped by running:
+
+```sh
+docker rm -f reverse
+docker ps
+```
+
+![images/docker-stop.png](images/docker-stop.png)
 
 ## Step Five: Use AWS Copilot to build and deploy the application on AWS Fargate
+
+Now that you have built and run a container in the development environment, the next step is to run the container as a horizontally scalable deployment in AWS Fargate. For this step we will use AWS Copilot.
+
+```sh
+copilot init
+```
 
 ## Step Six: Deploy a load test job using AWS Copilot
 
