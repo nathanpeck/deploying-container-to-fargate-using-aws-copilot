@@ -211,6 +211,39 @@ Now that you have built and run a container in the development environment, the 
 copilot init
 ```
 
+Copilot will ask you what you would like to name your application. Type the name of the application like "reverse":
+
+![images/copilot-reverse.png](images/copilot-reverse.png)
+
+Next Copilot will ask what type of application architecture you want to deploy. Use the down arrow to select "Load Balanced Web Service" and press enter:
+
+![images/copilot-load-balanced-web-service.png](images/copilot-load-balanced-web-service.png)
+
+Now Copilot asks what to name the service. Copilot
+organizes your code deployments into a tree:
+
+- Application
+  - Service
+
+So now we need to name the service that is deployed inside of the `reverse` application. You can name the service `reverse` as well:
+
+![images/copilot-service-name.png](images/copilot-service-name.png)
+
+Now Copilot will search the project directory to find Dockerfile's to deploy. Choose the `app/Dockerfile` entry:
+
+![images/copilot-dockerfile.png](images/copilot-dockerfile.png)
+
+You will see a spinner while Copilot initializes
+the application environment:
+
+![images/copilot-initialize.png](images/copilot-initialize.png)
+
+Finally, Copilot asks if you want to deploy a test environment. Press `y` and then Enter:
+
+![images/copilot-deploy.png](images/copilot-deploy.png)
+
+At this point all the decisions have been made, and you can sit back and watch Copilot do it's work on your behalf.
+
 ## Step Six: Deploy a load test job using AWS Copilot
 
 ## Step Seven: Look at CloudWatch to read the metrics
