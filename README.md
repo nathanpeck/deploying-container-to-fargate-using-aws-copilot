@@ -78,6 +78,7 @@ cat << EOF > ~/.aws/config
 [default]
 region = ${AWS_DEFAULT_REGION}
 output = json
+role_arn = $(aws iam get-role --role-name ecsworkshop-admin | jq -r .Role.Arn)
 credential_source = Ec2InstanceMetadata
 EOF
 ```
@@ -149,8 +150,11 @@ This file defines how to construct a Docker container image for the application.
 You can verify that this Dockerfile builds by running:
 
 ```sh
+cd app
 docker build -t app .
 ```
+
+![images/container-build.png](images/container-build.png)
 
 ## Step Four: Run the application locally on the Cloud9 Instance
 
