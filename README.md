@@ -1,30 +1,57 @@
 # Deploying a container to AWS Fargate using AWS Copilot
 
-## Step One: Setup a cloud development environment
+## Step One: Access your account
 
-Log in to your AWS account and open the [AWS Cloud9](https://console.aws.amazon.com/cloud9) console, then click "Create Environment"
+Open up the AWS Event Engine portal: [https://dashboard.eventengine.run/](https://dashboard.eventengine.run/)
 
-![images/create-cloud9.png](images/create-cloud9.png)
+![images/event-engine-welcome.png](images/event-engine-welcome.png)
 
-Name your environment and click "Next Step"
+You need to enter the hash that you were provided. This will open up the
+Event Engine dashboard:
 
-![images/name-and-create.png](images/name-and-create.png)
+![images/event-engine-dashboard.png](images/event-engine-dashboard.png)
 
-You can retain the basic default settings for the environment. Just click "Next Step" again:
+Click on the "AWS Console" button.
 
-![images/default-settings.png](images/default-settings.png)
+![images/event-engine-open-console.png](images/event-engine-dashboard.png)
 
-Now click on "Create Environment"
+Then click on "Open AWS Console".
 
-![images/create-environment.png](images/create-environment.png)
+You will be logged in to the AWS Console of a temporary AWS account that you
+can use for the duration of this workshop:
 
-It will take a couple of minutes to provision and launch the environment:
+![images/aws-console.png](images/aws-console.png)
+
+In the search bar at the top type "Cloud9" and click on the "Cloud9" service
+when it appears. This will open up the service console for accessing
+a cloud development environment. You will see a preprepared development
+environment that you can use:
+
+![images/cloud9.png](images/cloud9.png)
+
+Click on the "Open IDE" button to access your development environment. You may see an
+interstitial screen similar to this one for a minute or two:
 
 ![images/wait-for-environment.png](images/wait-for-environment.png)
 
-Once the environment is ready you can click the plus button and select "New Terminal" to open a command line terminal connected to the remote environment:
+Once the development environment opens up click on the settings button in the upper right corner:
 
-![images/launch-terminal.png](images/launch-terminal.png)
+![images/settings.png](images/settings.png)
+
+Then select "AWS Settings" and ensure that the "AWS managed temporary credentials" settings is off (red).
+
+![images/aws-settings.png](images/aws-settings.png)
+
+This workshop will be using an automatically created IAM role that is attached to the Cloud9 development
+environment, rather than the default Cloud9 temporary credentials.
+
+Now the development environment is ready to go, so we just need to open up a terminal to run commands in.
+
+<details>
+  <summary>Press the green plus button and select "New Terminal":</summary>
+
+  ![images/new-terminal.png](images/new-terminal.png)
+</details>
 
 In the terminal you can now run the command to install the latest version of AWS Copilot, and verify that it runs:
 
@@ -35,7 +62,7 @@ sudo mv copilot /usr/local/bin/copilot
 copilot --help
 ```
 
-Next let's run a command to make sure you will be logged in inside of this Cloud9 environment:
+Next let's run a quick script to customize the AWS config inside of the development environment:
 
 ```sh
 # Install prerequisites
@@ -74,7 +101,7 @@ You can run this microservice locally on the Cloud9 environment even though it i
 Go back to the terminal that you opened in Cloud9 and run:
 
 ```sh
-cd /deploying-container-to-fargate-using-aws-copilot/app
+cd deploying-container-to-fargate-using-aws-copilot/app
 npm install
 node index.js
 ```
@@ -95,7 +122,13 @@ Press Control + C in that tab to send a quit signal to the application and close
 
 Now that you have seen the application running, it is time to package this application up into a container image that can be run on AWS Fargate.
 
-Create a new file called `Dockerfile` inside of the `app` folder. Copy and paste the following content into the Dockerfile:
+<details>
+  <summary>Create a new file called `Dockerfile` inside of the `app` folder.</summary>
+
+  ![images/create-file.png](images/create-file.png)
+</details>
+
+Copy and paste the following content into the Dockerfile:
 
 ```Dockerfile
 FROM node:16 AS build
