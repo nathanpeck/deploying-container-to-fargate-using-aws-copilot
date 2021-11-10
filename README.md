@@ -399,7 +399,7 @@ Then choose the "ApplicationELB" category -> "TargetGroup" category and select t
 
 ![images/ecs-dashboad-requests.png](images/ecs-dashboard-requests.png)
 
-For an extra bonus are there are other things you are interested in about your service? You can add graphs for 2xx requests, 5xx requests, a log widget, etc. Once you are happy with the dashboard you have built you can either click "Save dashboard" to persist it for future reference, or just navigate away to discard it.
+For an extra bonus are there are other things you are interested in about your service? You can add graphs for 2xx requests, 5xx requests, average or p99 latency, a log widget, etc. Once you are happy with the dashboard you have built you can either click "Save dashboard" to persist it for future reference, or just navigate away to discard it.
 
 ## Step Seven: Tear everything down
 
