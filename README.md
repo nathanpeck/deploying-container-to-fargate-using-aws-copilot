@@ -313,4 +313,100 @@ First Copilot will ask for a name for the job. Type "load":
 
 ![images/copilot-job-name.png](images/copilot-job-name.png)
 
+Next Copilot will ask which Dockerfile you want to run. Choose the
+`load/Dockerfile` one:
+
+![images/copilot-job-docker.png](images/copilot-job-docker.png)
+
+Next you are asked how you want to schedule the job. Choose "Rate":
+
+![images/copilot-job-rate.png](images/copilot-job-rate.png)
+
+Last it will ask how long to wait between job executions. Type "1m" for 1 minute:
+
+![images/copilot-job-wait.png](images/copilot-job-wait.png)
+
+You will see that Copilot writes a manifest file to `copilot/load/manifest.yml`. This describes the job to run. We need to customize this a little bit. Open up the file and make the following change:
+
+```yml
+# Configuration for your container and task.
+image:
+  # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/scheduled-job/#image-build
+  build: load/Dockerfile
+
+# Add this command to run
+command:
+  -c 100 -n 10000 -d='this is a test string' <your deployed reverse app url>
+```
+
+For example it should look something like this:
+
+```yml
+# Configuration for your container and task.
+image:
+  # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/scheduled-job/#image-build
+  build: load/Dockerfile
+
+# Add this command to run
+command:
+  -c 100 -n 100000 -d='this is a test string'  http://rever-Publi-K741IWQLWVY4-1984597685.us-east-2.elb.amazonaws.com
+```
+
+This configures the command that the load test will run. There are a few components:
+
+- `-c 100` - Send up to 100 concurrent requests
+- `-n 100000` - Send a total of 100k requests
+- `-d='this is a test string` - The request payload
+- `http://rever-Publi-K741IWQLWVY4-1984597685.us-east-2.elb.amazonaws.com` - The URL to send requests to
+
+Once the load test manifest file is defined you should deploy it with:
+
+```sh
+copilot job deploy --name load --env test
+```
+
+You will see the status as Copilot creates the job:
+
+![images/copilot-job-creation.png](images/copilot-job-creation.png)
+
 ## Step Seven: Look at CloudWatch to read the metrics
+
+Once the job is deployed we can open up the Amazon ECS console to view the reverse service and start watching it's activity.
+
+![images/ecs-console.png](images/ecs-console.png)
+
+Open the cluster list and select the "reverse" cluster that appears there.
+
+![images/ecs-console-service-list.png](images/ecs-console-service-list.png)
+
+Inside of the cluster you will see a list of services. Select the "reverse" service. In the service details you will see the service health. Click the "Add to dashboard" button to open a dashboard where you can view higher resolution metrics for the service.
+
+![images/ecs-console-service-health.png](images/ecs-console-service-health.png)
+
+Click "Create new", enter a dashboard name like "reverse-dashboard" and click "Create". Then click "Add to Dashboard".
+
+Now you see a dashboard with the metrics for the service. You can edit these widgets to make them higher resolution:
+
+![images/ecs-dashboad-edit.png](images/ecs-dashboard-edit.png)
+
+![images/ecs-dashboad-edit-widget.png](images/ecs-dashboard-edit-widget.png)
+
+Adjust the resolution down to 1 minute to get higher resolution metrics for your service and click "Update Widget". You can do the same for both the CPU and memory graph.
+
+Last but not least you may want to see additional metrics such as the traffic. Click on "Add widget" and choose a "Line" widget, then choose "Metrics" as the data source.
+
+Then choose the "ApplicationELB" category -> "TargetGroup" category and select the "RequestCountPerTarget" metric for the "reverse" target. You can switch to the "graphed metrics" tab to adjust how the metric is displayed. You should choose "Sum" and "1 min" resolution. Finally click "Create widget":
+
+![images/ecs-dashboad-requests.png](images/ecs-dashboard-requests.png)
+
+For an extra bonus are there are other things you are interested in about your service? You can add graphs for 2xx requests, 5xx requests, a log widget, etc. Once you are happy with the dashboard you have built you can either click "Save dashboard" to persist it for future reference, or just navigate away to discard it.
+
+## Step Seven: Tear everything down
+
+If you want to clean everything up you can go back to Cloud9 and run:
+
+```sh
+copilot app delete
+```
+
+This will delete all resources grouped under the application, including the `reverse` service and the `load` job.
