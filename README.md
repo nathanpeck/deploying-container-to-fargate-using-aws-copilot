@@ -132,12 +132,12 @@ Now that you have seen the application running, it is time to package this appli
 Copy and paste the following content into the Dockerfile:
 
 ```Dockerfile
-FROM node:16 AS build
+FROM public.ecr.aws/bitnami/node:16 AS build
 WORKDIR /srv
 ADD package.json package-lock.json ./
 RUN npm install
 
-FROM node:16-slim
+FROM public.ecr.aws/bitnami/node:16-slim
 WORKDIR /srv
 COPY --from=build /srv .
 ADD . .
@@ -231,7 +231,7 @@ So now we need to name the service that is deployed inside of the `reverse` appl
 
 Now Copilot will search the project directory to find Dockerfile's to deploy. Choose the `app/Dockerfile` entry:
 
-![images/copilot-dockerfile.png](images/copilot-dockerfile.png)
+![images/copilot-docker.png](images/copilot-docker.png)
 
 You will see a spinner while Copilot initializes
 the application environment:
@@ -242,8 +242,75 @@ Finally, Copilot asks if you want to deploy a test environment. Press `y` and th
 
 ![images/copilot-deploy.png](images/copilot-deploy.png)
 
-At this point all the decisions have been made, and you can sit back and watch Copilot do it's work on your behalf.
+At this point all the major decisions have been made, and you can sit back and watch Copilot do it's work on your behalf.
+
+First Copilot creates the environment resources. This includes all the networking resources needed to have your own private cloud networking:
+
+![images/copilot-env-create.png](images/copilot-env-create.png)
+
+Next Copilot starts deploying your application into the environment. It builds and pushes the container. Then it launches the application resources:
+
+![images/copilot-application.png](images/copilot-application.png)
+
+At the end of the output you will see a URL for the deployed application.
+
+You can use this URL to send requests over the internet to your application:
+
+```sh
+curl -d "this is a test" <your environment url>
+```
+
+Last but not least you can use Copilot to fetch the logs for your running application:
+
+```sh
+copilot svc logs
+```
+
+![images/copilot-svc-logs.png](images/copilot-svc-logs.png)
+
+This time the logs are being fetched down from AWS Cloudwatch to display locally.
+
+You can also display the current status of the application with:
+
+```sh
+copilot svc status
+```
+
+![images/copilot-svc-status.png](images/copilot-svc-status.png)
 
 ## Step Six: Deploy a load test job using AWS Copilot
+
+We have a basic service deployment running, which is fine for a development service, but what if you want the application to be production ready.
+
+First let's increase the size of the deployment so that there are more reverse application containers running.
+
+Open up the file at `copilot/reverse/manifest.yml` and
+make the following changes:
+
+```yml
+cpu: 1024       # Number of CPU units for the task.
+memory: 2048    # Amount of memory in MiB used by the task.
+count: 3       # Number of tasks that should be running in your service.
+```
+
+Then run:
+
+```sh
+copilot deploy
+```
+
+This will update the deployment to run 3 containers that have more compute and memory resources, so that they can handle more traffic.
+
+![images/copilot-deploy-update.png](images/copilot-deploy-update.png)
+
+Once this completes we can deploy a load test job that generates traffic for this service. Start out by running:
+
+```sh
+copilot job init
+```
+
+First Copilot will ask for a name for the job. Type "load":
+
+![images/copilot-job-name.png](images/copilot-job-name.png)
 
 ## Step Seven: Look at CloudWatch to read the metrics
