@@ -137,7 +137,7 @@ WORKDIR /srv
 ADD package.json package-lock.json ./
 RUN npm install
 
-FROM public.ecr.aws/bitnami/node:16-slim
+FROM public.ecr.aws/bitnami/node:16-prod
 WORKDIR /srv
 COPY --from=build /srv .
 ADD . .
@@ -208,6 +208,7 @@ docker ps
 Now that you have built and run a container in the development environment, the next step is to run the container as a horizontally scalable deployment in AWS Fargate. For this step we will use AWS Copilot.
 
 ```sh
+cd deploying-container-to-fargate-using-aws-copilot
 copilot init
 ```
 
