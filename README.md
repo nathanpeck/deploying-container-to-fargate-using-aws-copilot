@@ -34,6 +34,8 @@ interstitial screen similar to this one for a minute or two:
 
 ![images/wait-for-environment.png](images/wait-for-environment.png)
 
+if you are running the workshop on your own and not at AWS event, you will have to associate IAM roles to your Cloud9 instance, please follow steps [here](./SETUP_IAM_ROLE.md).
+
 Once the development environment opens up click on the settings button in the upper right corner:
 
 ![images/settings.png](images/settings.png)
