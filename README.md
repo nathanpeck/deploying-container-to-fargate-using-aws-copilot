@@ -137,7 +137,7 @@ WORKDIR /srv
 ADD package.json package-lock.json ./
 RUN npm install
 
-FROM public.ecr.aws/bitnami/node:16-slim
+FROM public.ecr.aws/bitnami/node:16-prod
 WORKDIR /srv
 COPY --from=build /srv .
 ADD . .
